@@ -7,15 +7,8 @@
 
 alias ls='ls --color=auto'
 alias grep='grep --color=auto'
+alias neofetch='neofetch | lolcat'
+
 PS1='[\u@\h \W]\$ '
-
-export PATH="$PATH:/home/keval/sdks/flutter/bin/"
-export PATH="$PATH:/var/lib/snapd/snap/bin/"
-export CHROME_EXECUTABLE
-
-alias vi=nvim
-
-localectl set-x11-keymap us
-localectl set-keymap us
-
-[ -f ~/.fzf.bash ] && source ~/.fzf.bash
+alias vi='nvim'
+alias sudo='sudo '

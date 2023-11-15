@@ -81,16 +81,13 @@ plugins=(
 	git
 	zsh-autosuggestions
 	zsh-syntax-highlighting
-	zsh-z
-    )
+)
 
 source $ZSH/oh-my-zsh.sh
 
 # User configuration
 
 # export MANPATH="/usr/local/man:$MANPATH"
-
-PROMPT='%n@%m:%{$fg[cyan]%}%~%{$reset_color%} $ '
 
 # You may need to manually set your language environment
 # export LANG=en_US.UTF-8
@@ -113,18 +110,20 @@ PROMPT='%n@%m:%{$fg[cyan]%}%~%{$reset_color%} $ '
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
-
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+source ~/.oh-my-zsh/themes/powerlevel10k.zsh-theme
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
-export PATH="$PATH:/home/keval/sdks/flutter/bin/"
-export PATH="$PATH:/var/lib/snapd/snap/bin/"
-export CHROME_EXECUTABLE
-alias vi=nvim
-autoload -U compinit; compinit
-important="run/media/keval/important"
-personal="run/media/keval/personal"
-media="run/media/keval/media"
-primary="/"
+alias vi='nvim'
+alias sudo='sudo '
+alias nx='npx sequelize-cli'
+alias neofetch='neofetch | lolcat'
+
+export PATH=$PATH:/opt/node/bin
+export PATH=~/.npm-global/bin:$PATH
+
+export GTK_USE_PORTAL=1
+
+GPG_TTY=$(tty)
+export GPG_TTY
