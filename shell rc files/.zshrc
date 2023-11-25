@@ -132,7 +132,6 @@ source ~/.oh-my-zsh/themes/powerlevel10k.zsh-theme
 alias vi='nvim'
 alias sudo='sudo '
 alias nx='npx sequelize-cli'
-alias neofetch='neofetch | lolcat'
 
 export PATH=$PATH:/opt/node/bin
 export PATH=~/.npm-global/bin:$PATH
@@ -141,11 +140,3 @@ export GTK_USE_PORTAL=1
 
 GPG_TTY=$(tty)
 export GPG_TTY
-
-# making kitty transparent
-# Blur {{{
-if [[ $(ps --no-header -p $PPID -o comm) =~ '^yakuake|kitty$' ]]; then
-        for wid in $(xdotool search --pid $PPID); do
-            xprop -f _KDE_NET_WM_BLUR_BEHIND_REGION 32c -set _KDE_NET_WM_BLUR_BEHIND_REGION 0 -id $wid; done
-fi
-# }}}
