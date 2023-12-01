@@ -53,14 +53,14 @@ vim.o.guifont = 'Hack Nerd Font Mono:h11:#h-slight'
 vim.cmd([[
   set clipboard+=unnamedplus
   let g:clipboard = {
-    \ 'name': 'xclip',
+    \ 'name': 'wl-clipboard',
     \ 'copy': {
-      \ '+': 'xclip -selection clipboard -in',
-      \ '*': 'xclip -selection primary -in',
+      \ '+': 'wl-copy',
+      \ '*': 'wlcopy --primary',
       \ },
     \ 'paste': {
-      \ '+': 'xclip -selection clipboard -out',
-      \ '*': 'xclip -selection primary -out',
+      \ '+': 'wl-paste',
+      \ '*': 'wl-paste --primary',
       \ },
     \ 'cache_enabled': 1,
     \ }
@@ -107,18 +107,15 @@ require('lazy').setup({
   'tpope/vim-fugitive',
   'tpope/vim-rhubarb',
   'jose-elias-alvarez/null-ls.nvim',
-  -- prettier formatter: 
-  'MunifTanjim/prettier.nvim',
   -- auto completions
   'hrsh7th/cmp-nvim-lsp',
   'hrsh7th/cmp-buffer',
   'hrsh7th/cmp-path',
   'hrsh7th/cmp-cmdline',
   'hrsh7th/nvim-cmp',
- 
+  'windwp/nvim-ts-autotag',
   -- Detect tabstop and shiftwidth automatically
   'tpope/vim-sleuth',
-  
   {
     'windwp/nvim-autopairs',
     event = "InsertEnter",
@@ -126,13 +123,14 @@ require('lazy').setup({
   },
   -- loading web-devicons
   { 'nvim-tree/nvim-web-devicons', lazy = false },
-  
+ 
   { 'nvim-tree/nvim-tree.lua', lazy = false },
   -- NOTE: This is where your plugins related to LSP can be installed.
   --  The configuration is done below. Search for lspconfig to find it below.
   {
     -- LSP Configuration & Plugins
     'neovim/nvim-lspconfig',
+    lazy = false,
     dependencies = {
             -- Automatically install LSPs to stdpath for neovim
       'williamboman/mason.nvim',
@@ -208,7 +206,7 @@ require('lazy').setup({
     -- folke tokyonight.nvim
     'folke/tokyonight.nvim',
     priority = 1000,
-    lazy = false, 
+    lazy = false,
   },
 
   {
@@ -384,7 +382,11 @@ cmp.event:on(
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
 
-require('nvim-tree').setup({})
+require('nvim-tree').setup({
+  update_focused_file = {
+    enable = true,
+  }
+})
 
 -- Set highlight on search
 vim.o.hlsearch = false
@@ -402,6 +404,11 @@ vim.o.clipboard = 'unnamedplus'
 
 -- Enable break indent
 vim.o.breakindent = true
+
+-- setting tab spaces
+vim.o.tabstop = 2
+vim.o.softtabstop = 2
+vim.o.shiftwidth = 2
 
 -- Save undo history
 vim.o.undofile = true
@@ -452,7 +459,7 @@ vim.keymap.set('v', 'cc', '"*y', { noremap = true })
 vim.keymap.set('x', 'cx', '"+d', { noremap = true })
 
 -- nvm tree toggling shortcut
-vim.keymap.set('n', '<Space><Right>', "<cmd>NvimTreeToggle<cr>", { desc = "open or close file navigation" })
+vim.keymap.set('n', '<Space><Right>', "<cmd>NvimTreeToggle<cr>", { desc = "open or close nvim tree" })
 vim.keymap.set('n', '<Space><Left>', "<cmd>NvimTreeFocus<cr>", { desc = "focus back to the nvim tree" })
 
 -- [[ Highlight on yank ]]
@@ -525,7 +532,8 @@ vim.keymap.set('n', '<leader>/', function()
   -- You can pass additional configuration to telescope to change theme, layout, etc.
   require('telescope.builtin').current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
     winblend = 10,
-    previewer = false,
+    previewer = true,
+    only_full_match = true
   })
 end, { desc = '[/] Fuzzily search in current buffer' })
 
@@ -544,11 +552,11 @@ vim.keymap.set('n', '<leader>sr', require('telescope.builtin').resume, { desc = 
 vim.defer_fn(function()
   require('nvim-treesitter.configs').setup {
     -- Add languages to be installed here that you want installed for treesitter
-    ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'tsx', 'javascript', 'typescript', 'vimdoc', 'vim', 'bash' },
+    ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'tsx', 'javascript', 'typescript', 'vimdoc', 'vim', 'bash', 'html', 'css' },
 
     -- Autoinstall languages that are not installed. Defaults to false (but you can change for yourself!)
     auto_install = false,
-
+    autotag = { enable = true },
     highlight = { enable = true },
     indent = { enable = true },
     incremental_selection = {
@@ -675,8 +683,6 @@ require('mason').setup({
   }
 })
 
-require('mason-lspconfig').setup()
-
 -- Enable the following language servers
 --  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
 --
@@ -685,14 +691,21 @@ require('mason-lspconfig').setup()
 --
 --  If you want to override the default filetypes that your language server will attach to you can
 --  define the property 'filetypes' to the map in question.
+
 local servers = {
   -- clangd = {},
   -- gopls = {},
   -- pyright = {},
   -- rust_analyzer = {},
-  -- tsserver = {},
-  -- html = { filetypes = { 'html', 'twig', 'hbs'} },
 
+  html = { filetypes = { 'html' } },
+  jsonls = { filetypes = { 'json' } },
+  cssls = { filetypes = { 'css', 'scss', 'less' } },
+  tailwindcss = { filetypes = { 'css' } },
+  tsserver = {
+    cmd = {"typescript-language-server", "--stdio"},
+    filetypes = {"javascript", "javascriptreact", "javascript.jsx", "typescript", "typescriptreact", "typescript.tsx"},
+  },
   lua_ls = {
     Lua = {
       workspace = { checkThirdParty = false },
@@ -722,14 +735,15 @@ mason_lspconfig.setup_handlers {
       on_attach = on_attach,
       settings = servers[server_name],
       filetypes = (servers[server_name] or {}).filetypes,
+      autostart = true,
     }
   end,
 }
 
 -- [[ Configure nvim-cmp ]]
 -- See `:help cmp`
-local cmp = require 'cmp'
-local luasnip = require 'luasnip'
+local cmp = require('cmp')
+local luasnip = require('luasnip')
 require('luasnip.loaders.from_vscode').lazy_load()
 luasnip.config.setup {}
 
@@ -740,13 +754,14 @@ cmp.setup {
     end,
   },
   completion = {
-    completeopt = 'menu,menuone,noinsert'
+    completeopt = 'menu,menuone,preview,noinsert, noselect'
   },
   mapping = cmp.mapping.preset.insert {
     ['<C-n>'] = cmp.mapping.select_next_item(),
     ['<C-p>'] = cmp.mapping.select_prev_item(),
     ['<C-d>'] = cmp.mapping.scroll_docs(-4),
     ['<C-f>'] = cmp.mapping.scroll_docs(4),
+    ['q'] = cmp.mapping.abort(),
     ['<C-Space>'] = cmp.mapping.complete {},
     ['<CR>'] = cmp.mapping.confirm {
       behavior = cmp.ConfirmBehavior.Replace,
@@ -772,10 +787,11 @@ cmp.setup {
     end, { 'i', 's' }),
   },
   sources = {
+    { name = 'buffer' },
+    { name = 'path' },
     { name = 'nvim_lsp' },
     { name = 'luasnip' },
   },
 }
-
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
