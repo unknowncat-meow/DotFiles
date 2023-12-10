@@ -114,6 +114,12 @@ require('lazy').setup({
   'hrsh7th/cmp-cmdline',
   'hrsh7th/nvim-cmp',
   'windwp/nvim-ts-autotag',
+
+  -- dart setup
+  'natebosch/vim-lsc',
+  'dart-lang/dart-vim-plugin',
+  'thosakwe/vim-flutter',
+  'natebosch/vim-lsc-dart',
   -- Detect tabstop and shiftwidth automatically
   'tpope/vim-sleuth',
   {
