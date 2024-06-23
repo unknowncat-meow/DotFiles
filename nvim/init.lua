@@ -47,24 +47,22 @@ vim.g.maplocalleader = ' '
 
 
 -- settting up the fonts
-vim.o.guifont = 'Hack Nerd Font Mono:h11:#h-slight'
+vim.o.guifont = 'CaskaydiaCove Nerd Font Mono:h11:#h-slight'
 
+vim.opt.clipboard:append('unnamedplus')
 -- setting up clipboard manger
-vim.cmd([[
-  set clipboard+=unnamedplus
-  let g:clipboard = {
-    \ 'name': 'wl-clipboard',
-    \ 'copy': {
-      \ '+': 'wl-copy',
-      \ '*': 'wlcopy --primary',
-      \ },
-    \ 'paste': {
-      \ '+': 'wl-paste',
-      \ '*': 'wl-paste --primary',
-      \ },
-    \ 'cache_enabled': 1,
-    \ }
-]])
+vim.g.clipboard = {
+  name = 'wl-clipboard',
+  copy = {
+    ['+'] = 'wl-copy',
+    ['*'] = 'wl-copy --primary',
+  },
+  paste = {
+    ['+'] = 'wl-paste',
+    ['*'] = 'wl-paste --primary',
+  },
+  cache_enabled = 1,
+}
 
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    https://github.com/folke/lazy.nvim
