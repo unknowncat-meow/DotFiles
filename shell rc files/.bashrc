@@ -7,8 +7,7 @@
 
 alias ls='ls --color=auto'
 alias grep='grep --color=auto'
-alias neofetch='neofetch | lolcat'
-
 PS1='[\u@\h \W]\$ '
-alias vi='nvim'
-alias sudo='sudo '
+
+## ssh agent
+eval $(keychain --eval --agents ssh id_rsa > /dev/null)
